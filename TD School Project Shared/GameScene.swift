@@ -8,12 +8,126 @@
 
 import SpriteKit
 
-class GameScene: SKScene {
-    
-    
-    fileprivate var label : SKLabelNode?
-    fileprivate var spinnyNode : SKShapeNode?
+enum bodyTypes:UInt32 {
+    case enemy = 0b1
+    case bullet = 0b10
+}
 
+enum gameVariables:CGFloat {
+    case tileSize = 90
+    case height = 900
+    case width = 1600
+    case gameBarWidth = 250
+}
+
+enum damageTypes {
+    case none
+    case projectile
+    case fire
+    case ice
+    case laser
+    case electric
+    
+    var color: UIColor {
+        switch self {
+        case .none:
+            return #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+        case .projectile:
+            return #colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 0)
+        case .fire:
+            return #colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1)
+        case .ice:
+            return #colorLiteral(red: 0.7345260981, green: 0.9764705896, blue: 0.9541370781, alpha: 1)
+        case .laser:
+            return #colorLiteral(red: 0.5568627715, green: 0.3529411852, blue: 0.9686274529, alpha: 1)
+        case .electric:
+            return #colorLiteral(red: 0.1058823529, green: 0.6784313725, blue: 0.9725490196, alpha: 1)
+        }
+    }
+}
+
+enum towerTypes {
+    case basic
+    case fire
+    case laser
+    case electric
+    
+    var cost: Int {
+        switch self {
+        case .basic:
+            return 50
+        case .fire:
+            return 100
+        case .laser:
+            return 200
+        case .electric:
+            return 150
+        }
+    }
+    
+    var createTower: Tower {
+        switch self {
+        case .basic:
+            return BasicTower(texture: SKTexture(imageNamed: "basicTower"),
+                              color: .white,
+                              size: CGSize(width: gameVariables.tileSize.rawValue, height: gameVariables.tileSize.rawValue))
+        case .fire:
+            return FireTower(texture: SKTexture(imageNamed: "fireTower"),
+                             color: UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 1),
+                             size: CGSize(width: gameVariables.tileSize.rawValue, height: gameVariables.tileSize.rawValue))
+        case .laser:
+            return LaserTower(texture: SKTexture(imageNamed: "laserTower"),
+                              color: UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 1),
+                              size: CGSize(width: gameVariables.tileSize.rawValue, height: gameVariables.tileSize.rawValue))
+        case .electric:
+            return ElectricTower(texture: SKTexture(imageNamed: "electricTower"),
+                                 color: UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 1),
+                                 size: CGSize(width: gameVariables.tileSize.rawValue, height: gameVariables.tileSize.rawValue))
+            
+        }
+    }
+}
+
+//MARK: Scene
+
+class GameScene: SKScene, SKPhysicsContactDelegate {
+    
+    var isSet: Bool = false
+    
+    //waves
+    var wavesNumber:Int = 0
+    var waveDone: Bool = true
+    var wavePosistion: Int = 0
+    var numSpawned: Int = 0
+    var gameDone:Bool = false
+    var manager: SceneManager?
+    
+    //(time between spawn, enemy type, how many), multiple patterns in wave
+    let wavesStructure: [[(Double,[damageTypes],Int)]] = [
+        [(0.5, [.none], 10)],
+        [(0.5, [.laser], 10)],
+        [(0.25, [.none], 100)]
+    ]
+    var currentSpawnTime: TimeInterval = 0.5 // make first time between ;)
+    
+    //variables for nodes that will be used from the sks file
+
+    var map:SKTileMapNode?
+    var path:Path?
+    
+    // timing variables.
+    
+    var lastTime:TimeInterval = 0
+    var lastspawn:TimeInterval = 0
+    
+    //game variables
+    
+    var money:Int = 100
+    var score:Int = 0
+    var lives:Int = 10
+    let moneyNode: SKLabelNode = SKLabelNode(fontNamed: "Helvetica")
+    let livesNode:SKLabelNode = SKLabelNode(fontNamed: "Helvetica")
+    let scoreNode:SKLabelNode = SKLabelNode(fontNamed: "Helvetica")
     
     class func newGameScene() -> GameScene {
         // Load 'GameScene.sks' as an SKScene.
@@ -22,123 +136,325 @@ class GameScene: SKScene {
             abort()
         }
         
+        
         // Set the scale mode to scale to fit the window
-        scene.scaleMode = .aspectFill
+        scene.scaleMode = .aspectFit
         
         return scene
     }
     
     func setUpScene() {
-        // Get label node from scene and store it for use later
-        self.label = self.childNode(withName: "//helloLabel") as? SKLabelNode
-        if let label = self.label {
-            label.alpha = 0.0
-            label.run(SKAction.fadeIn(withDuration: 2.0))
-        }
         
-        // Create shape node to use during mouse interaction
-        let w = (self.size.width + self.size.height) * 0.05
-        self.spinnyNode = SKShapeNode.init(rectOf: CGSize.init(width: w, height: w), cornerRadius: w * 0.3)
+        isSet = true
+        self.physicsWorld.contactDelegate = self
+        self.physicsWorld.gravity = CGVector(dx: 0, dy: 0)
         
-        if let spinnyNode = self.spinnyNode {
-            spinnyNode.lineWidth = 4.0
-            spinnyNode.run(SKAction.repeatForever(SKAction.rotate(byAngle: CGFloat(Double.pi), duration: 1)))
-            spinnyNode.run(SKAction.sequence([SKAction.wait(forDuration: 0.5),
-                                              SKAction.fadeOut(withDuration: 0.5),
-                                              SKAction.removeFromParent()]))
-            
-            #if os(watchOS)
-                // For watch we just periodically create one of these and let it spin
-                // For other platforms we let user touch/mouse events create these
-                spinnyNode.position = CGPoint(x: 0.0, y: 0.0)
-                spinnyNode.strokeColor = SKColor.red
-                self.run(SKAction.repeatForever(SKAction.sequence([SKAction.wait(forDuration: 2.0),
-                                                                   SKAction.run({
-                                                                       let n = spinnyNode.copy() as! SKShapeNode
-                                                                       self.addChild(n)
-                                                                   })])))
-            #endif
+        let gameWidth = gameVariables.width.rawValue - gameVariables.gameBarWidth.rawValue
+        let rowAmount = Int(gameVariables.height.rawValue/gameVariables.tileSize.rawValue)
+        let columnAmount = Int(gameWidth/gameVariables.tileSize.rawValue)
+        
+        path = Path(_rows: rowAmount, _columns: columnAmount)
+        let tileSet = SKTileSet(named: "Maze")!
+        let grassTile = tileSet.tileGroups.first(where: {$0.name == "wall\(Int(gameVariables.tileSize.rawValue))"})
+        let tileMap = SKTileMapNode(tileSet: tileSet, columns: columnAmount, rows: rowAmount,
+                                    tileSize: CGSize(width: gameVariables.tileSize.rawValue,
+                                                     height: gameVariables.tileSize.rawValue))
+        for row in 0..<path!.grid.count {
+            for column in 0..<path!.grid[row].count {
+                if path!.grid[row][column] == 0 {
+                    tileMap.setTileGroup(grassTile, forColumn: column, row: row)
+                }
+            }
         }
-    }
-    
-    #if os(watchOS)
-    override func sceneDidLoad() {
-        self.setUpScene()
-    }
-    #else
-    override func didMove(to view: SKView) {
-        self.setUpScene()
-    }
-    #endif
+        self.addChild(tileMap)
+        tileMap.position = CGPoint(x: -gameVariables.gameBarWidth.rawValue/2, y: 0)
+        tileMap.zPosition = -1
+        map = tileMap
 
-    func makeSpinny(at pos: CGPoint, color: SKColor) {
-        if let spinny = self.spinnyNode?.copy() as! SKShapeNode? {
-            spinny.position = pos
-            spinny.strokeColor = color
-            self.addChild(spinny)
+        print(self.children)
+        
+        if let tester:TowerButton = self.childNode(withName: "basicTowerButton") as? TowerButton {
+            print("tower created")
+            tester.whichTower = towerTypes.basic
+        } else {
+            print("tower button not created")
         }
+        
+        if let tester:TowerButton = self.childNode(withName: "laserTowerButton") as? TowerButton {
+            print("tower created")
+            tester.whichTower = towerTypes.laser
+        } else {
+            print("tower button not created")
+        }
+        
+        if let tester:TowerButton = self.childNode(withName: "fireTowerButton") as? TowerButton {
+            print("tower created")
+            tester.whichTower = towerTypes.fire
+        } else {
+            print("tower button not created")
+        }
+        
+        if let tester:TowerButton = self.childNode(withName: "electricTowerButton") as? TowerButton {
+            print("tower created")
+            tester.whichTower = towerTypes.electric
+        } else {
+            print("tower button not created")
+        }
+        
+//        if let tester:SKTileMapNode = self.childNode(withName: "Map1") as? SKTileMapNode {
+//            print("map created")
+//            map = tester
+//        } else {
+//            print("map not created")
+//        }
+        
+        if let tester:Button = self.childNode(withName: "nextWaveButton") as? Button {
+            print("next wave button created")
+            let nextWaveButton = tester
+            nextWaveButton.buttonAction = {self.waveDone = false}
+        } else {
+            print("next wave button not created")
+        }
+        
+        if let tester:Button = self.childNode(withName: "pauseButton") as? Button {
+            print("pause button created")
+            let pauseButton = tester
+            pauseButton.buttonAction = {
+                self.isPaused = true
+                self.physicsWorld.speed = 0
+                self.manager?.pauseGame(_which: .pause)
+            }
+        } else {
+            print("pause not created")
+        }
+        
+        //label creation
+        
+        scoreNode.text = "Score: \(score)"
+        scoreNode.fontSize = 30
+        scoreNode.fontColor = SKColor.black
+        scoreNode.horizontalAlignmentMode = .right
+        scoreNode.position = CGPoint(x: 550, y: frame.maxY-30)
+        
+        addChild(scoreNode)
+        
+        moneyNode.text = "Money: \(money)"
+        moneyNode.fontSize = 30
+        moneyNode.fontColor = SKColor.black
+        moneyNode.horizontalAlignmentMode = .right
+        moneyNode.position = CGPoint(x: 550, y: frame.maxY-60)
+        
+        addChild(moneyNode)
+        
+        livesNode.text = "Lives: \(lives)"
+        livesNode.fontSize = 30
+        livesNode.fontColor = SKColor.black
+        livesNode.horizontalAlignmentMode = .right
+        livesNode.position = CGPoint(x: 550, y: frame.maxY-90)
+        
+        addChild(livesNode)
+        
     }
     
-    override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
+    override func didMove(to view: SKView) {
+        
+        print("moved to game scene view")
+        
+        self.isPaused = false
+        self.physicsWorld.speed = 1
+        
+        if !isSet {
+           self.setUpScene()
+        }
     }
 }
 
-#if os(iOS) || os(tvOS)
-// Touch-based event handling
-extension GameScene {
+//MARK: iOS Controls
 
+#if os(iOS)
+
+// Touch-based event handling
+
+extension GameScene {
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if let label = self.label {
-            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
-        }
         
-        for t in touches {
-            self.makeSpinny(at: t.location(in: self), color: SKColor.green)
+        guard let touch = touches.first else {
+            return
         }
+        _ = touch.location(in: self)
+        
+        (self.childNode(withName: "towerMenu") as? GameBar)?.rangeIndicator?.removeFromParent()
+        self.childNode(withName: "towerMenu")?.removeFromParent()
     }
-    
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches {
-            self.makeSpinny(at: t.location(in: self), color: SKColor.blue)
-        }
-    }
-    
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches {
-            self.makeSpinny(at: t.location(in: self), color: SKColor.red)
-        }
-    }
-    
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches {
-            self.makeSpinny(at: t.location(in: self), color: SKColor.red)
-        }
-    }
-    
-   
+
 }
 #endif
+
+//MARK: macOS Controls
 
 #if os(OSX)
+
 // Mouse-based event handling
+
 extension GameScene {
-
     override func mouseDown(with event: NSEvent) {
-        if let label = self.label {
-            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
-        }
-        self.makeSpinny(at: event.location(in: self), color: SKColor.green)
+        //nothing
     }
-    
-    override func mouseDragged(with event: NSEvent) {
-        self.makeSpinny(at: event.location(in: self), color: SKColor.blue)
-    }
-    
-    override func mouseUp(with event: NSEvent) {
-        self.makeSpinny(at: event.location(in: self), color: SKColor.red)
-    }
-
 }
 #endif
+
+//MARK: physics
+
+extension GameScene {
+    func didBegin(_ contact: SKPhysicsContact) {
+        
+        if (contact.bodyA.categoryBitMask == bodyTypes.bullet.rawValue && contact.bodyB.categoryBitMask == bodyTypes.enemy.rawValue) {
+            let E:Enemies = contact.bodyB.node as! Enemies
+            let B: Bullet = contact.bodyA.node as! Bullet
+            let isDead = E.hit(dmg: B.damage, dmgType: B.dmgType)
+            if isDead {
+                B.parentTower.kills += 1
+            }
+            if B.parentTower is FireTower {
+                (B.parentTower as! FireTower).applyDot(enemy: E)
+            }
+            B.removeFromParent()
+        } else if (contact.bodyA.categoryBitMask == bodyTypes.enemy.rawValue && contact.bodyB.categoryBitMask == bodyTypes.bullet.rawValue) {
+            let E:Enemies = contact.bodyA.node as! Enemies
+            let B: Bullet = contact.bodyB.node as! Bullet
+            let isDead = E.hit(dmg: B.damage, dmgType: B.dmgType)
+            if isDead {
+                B.parentTower.kills += 1
+            }
+            if B.parentTower is FireTower {
+                (B.parentTower as! FireTower).applyDot(enemy: E)
+            }
+            B.removeFromParent()
+        }
+    }
+}
+
+//MARK: Frame Updates
+
+extension GameScene {
+    
+    override func update(_ currentTime: TimeInterval) {
+        
+        // removes nodes that are outside of the scenes boundaries.
+        
+        for child in self.children {
+            if self.frame.contains(child.position) == false {
+                child.removeFromParent()
+            } else if child is Enemies && child.position.x>550 {
+                child.removeFromParent()
+                lives += -1
+            }
+        }
+        
+        // end game
+        
+        if lives < 1 {
+            manager?.pauseGame(_which: .end)
+        }
+        
+        //keeps track of time
+        
+        let deltaTime = currentTime - lastTime
+        //let currentFPS = 1/deltaTime
+        lastTime = currentTime
+        
+        //spawning
+        
+        
+        if gameDone == false {
+            if waveDone == false {
+                if lastspawn > currentSpawnTime {
+                    if numSpawned < wavesStructure[wavesNumber][wavePosistion].2 {
+                        let enemy = Enemies(texture: SKTexture(imageNamed: "enemy1"),
+                                            color: UIColor(displayP3Red: 0.2, green: 0.2, blue: 0.6, alpha: 1),
+                                            size: CGSize(width: gameVariables.tileSize.rawValue, height: gameVariables.tileSize.rawValue),
+                                            _path: self.path!.path,
+                                            _types: wavesStructure[wavesNumber][wavePosistion].1)
+                        numSpawned += 1
+                        self.addChild(enemy)
+                        lastspawn = 0
+                    } else {
+                        numSpawned = 0
+                        wavePosistion += 1
+                        if wavePosistion >= wavesStructure[wavesNumber].count {
+                            wavesNumber += 1
+                            wavePosistion = 0
+                            waveDone = true
+                        }
+                        if wavesNumber >= wavesStructure.count {
+                            print("level finished")
+                            gameDone = true
+                        } else {
+                            currentSpawnTime = wavesStructure[wavesNumber][wavePosistion].0
+                        }
+                    }
+
+                } else {
+                    lastspawn += deltaTime
+                }
+            }
+        }
+        
+        
+        // loops through scene for objects to update
+        
+        for child in self.children {
+            
+            if child is Tower && (child as? Tower)?.placed == true{
+                
+                let closest = nearestNode(node: child)
+                
+                if closest.node != nil {
+                    (child as? Tower)?.update(closest: closest.node!, dist: closest.dist, deltaTime: deltaTime)
+                }
+            } /* else if child is Bullet {
+                (child as! Bullet).update(deltaTime: deltaTime)
+            } */
+        }
+        
+        //update labels
+        
+        self.scoreNode.text = "Score: \(score)"
+        self.livesNode.text = "lives: \(lives)"
+        self.moneyNode.text = "money: \(money)"
+    }
+}
+
+//MARK: functions
+
+extension GameScene {
+    
+    // use of pythagoras to achieve a single distance between two nodes
+    
+    func distance(node:CGPoint, target:CGPoint) -> CGFloat {
+        let dist:CGFloat = sqrt((target.x-node.x)*(target.x-node.x) + (target.y-node.y)*(target.y-node.y))
+        
+        return dist
+    }
+    
+    // this takes the scene and cycles through the children of it taking the distance from the base node to each other node. returns closest node.
+    
+    func nearestNode(node:SKNode) -> (node: SKNode?, dist: CGFloat) {
+        
+        var shortestNode:SKNode?
+        var shortest:CGFloat = CGFloat.infinity
+        
+        for child in self.children {
+            let dis = distance(node: node.position, target: child.position)
+            if dis < shortest && child is Enemies && dis != 0 {
+                shortestNode = child
+                shortest = dis
+            }
+            
+        }
+        return (shortestNode, shortest)
+    }
+    
+}
 

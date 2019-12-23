@@ -22,6 +22,26 @@
 		04422FB8231D38C70082C2E3 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04422F91231D38C50082C2E3 /* GameScene.swift */; };
 		04422FB9231D38C70082C2E3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 04422F92231D38C60082C2E3 /* Assets.xcassets */; };
 		04422FBA231D38C70082C2E3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 04422F92231D38C60082C2E3 /* Assets.xcassets */; };
+		048B749E232AC85400066869 /* spriteButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048B749D232AC85400066869 /* spriteButtons.swift */; };
+		048B749F232AC85400066869 /* spriteButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048B749D232AC85400066869 /* spriteButtons.swift */; };
+		048B74A1232ACC9C00066869 /* MainMenu.sks in Resources */ = {isa = PBXBuildFile; fileRef = 048B74A0232ACC9C00066869 /* MainMenu.sks */; };
+		048B74A2232ACC9C00066869 /* MainMenu.sks in Resources */ = {isa = PBXBuildFile; fileRef = 048B74A0232ACC9C00066869 /* MainMenu.sks */; };
+		048B74A4232ACD5900066869 /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048B74A3232ACD5900066869 /* MainMenu.swift */; };
+		048B74A5232ACD5900066869 /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048B74A3232ACD5900066869 /* MainMenu.swift */; };
+		048B74A7232B968700066869 /* Tower.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048B74A6232B968700066869 /* Tower.swift */; };
+		048B74A8232B968700066869 /* Tower.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048B74A6232B968700066869 /* Tower.swift */; };
+		048B74AA2340DB0600066869 /* Enemies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048B74A92340DB0600066869 /* Enemies.swift */; };
+		048B74AB2340DB0600066869 /* Enemies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048B74A92340DB0600066869 /* Enemies.swift */; };
+		04CA1AEC2367437900276EA0 /* MyTileSet.sks in Resources */ = {isa = PBXBuildFile; fileRef = 04CA1AEB2367437900276EA0 /* MyTileSet.sks */; };
+		04CA1AED2367437900276EA0 /* MyTileSet.sks in Resources */ = {isa = PBXBuildFile; fileRef = 04CA1AEB2367437900276EA0 /* MyTileSet.sks */; };
+		04CA1AEF2369F3C200276EA0 /* GameBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04CA1AEE2369F3C200276EA0 /* GameBar.swift */; };
+		04CA1AF02369F3C200276EA0 /* GameBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04CA1AEE2369F3C200276EA0 /* GameBar.swift */; };
+		04E27803238C24B500AB3DB6 /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E27802238C24B500AB3DB6 /* Path.swift */; };
+		04E27804238C24B500AB3DB6 /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E27802238C24B500AB3DB6 /* Path.swift */; };
+		04E278062391646C00AB3DB6 /* PauseMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E278052391646C00AB3DB6 /* PauseMenu.swift */; };
+		04E278072391646C00AB3DB6 /* PauseMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E278052391646C00AB3DB6 /* PauseMenu.swift */; };
+		04E27809239166B000AB3DB6 /* PauseMenu.sks in Resources */ = {isa = PBXBuildFile; fileRef = 04E27808239166B000AB3DB6 /* PauseMenu.sks */; };
+		04E2780A239166B000AB3DB6 /* PauseMenu.sks in Resources */ = {isa = PBXBuildFile; fileRef = 04E27808239166B000AB3DB6 /* PauseMenu.sks */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +60,16 @@
 		04422FAD231D38C70082C2E3 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		04422FB0231D38C70082C2E3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		04422FB2231D38C70082C2E3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		048B749D232AC85400066869 /* spriteButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = spriteButtons.swift; sourceTree = "<group>"; };
+		048B74A0232ACC9C00066869 /* MainMenu.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MainMenu.sks; sourceTree = "<group>"; };
+		048B74A3232ACD5900066869 /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
+		048B74A6232B968700066869 /* Tower.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tower.swift; sourceTree = "<group>"; };
+		048B74A92340DB0600066869 /* Enemies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enemies.swift; sourceTree = "<group>"; };
+		04CA1AEB2367437900276EA0 /* MyTileSet.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MyTileSet.sks; sourceTree = "<group>"; };
+		04CA1AEE2369F3C200276EA0 /* GameBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameBar.swift; sourceTree = "<group>"; };
+		04E27802238C24B500AB3DB6 /* Path.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Path.swift; sourceTree = "<group>"; };
+		04E278052391646C00AB3DB6 /* PauseMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PauseMenu.swift; sourceTree = "<group>"; };
+		04E27808239166B000AB3DB6 /* PauseMenu.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = PauseMenu.sks; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,9 +103,19 @@
 		04422F8E231D38C50082C2E3 /* TD School Project Shared */ = {
 			isa = PBXGroup;
 			children = (
+				04CA1AEB2367437900276EA0 /* MyTileSet.sks */,
+				048B74A0232ACC9C00066869 /* MainMenu.sks */,
+				04E27802238C24B500AB3DB6 /* Path.swift */,
+				048B74A3232ACD5900066869 /* MainMenu.swift */,
+				048B749D232AC85400066869 /* spriteButtons.swift */,
+				048B74A6232B968700066869 /* Tower.swift */,
+				048B74A92340DB0600066869 /* Enemies.swift */,
+				04CA1AEE2369F3C200276EA0 /* GameBar.swift */,
 				04422F8F231D38C50082C2E3 /* Actions.sks */,
 				04422F90231D38C50082C2E3 /* GameScene.sks */,
 				04422F91231D38C50082C2E3 /* GameScene.swift */,
+				04E278052391646C00AB3DB6 /* PauseMenu.swift */,
+				04E27808239166B000AB3DB6 /* PauseMenu.sks */,
 				04422F92231D38C60082C2E3 /* Assets.xcassets */,
 			);
 			path = "TD School Project Shared";
@@ -193,10 +233,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				04422FB5231D38C70082C2E3 /* GameScene.sks in Resources */,
+				048B74A1232ACC9C00066869 /* MainMenu.sks in Resources */,
 				04422FA0231D38C70082C2E3 /* Main.storyboard in Resources */,
+				04CA1AEC2367437900276EA0 /* MyTileSet.sks in Resources */,
 				04422FB3231D38C70082C2E3 /* Actions.sks in Resources */,
 				04422FA3231D38C70082C2E3 /* LaunchScreen.storyboard in Resources */,
 				04422FB9231D38C70082C2E3 /* Assets.xcassets in Resources */,
+				04E27809239166B000AB3DB6 /* PauseMenu.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -204,9 +247,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				04CA1AED2367437900276EA0 /* MyTileSet.sks in Resources */,
 				04422FB1231D38C70082C2E3 /* Main.storyboard in Resources */,
 				04422FB6231D38C70082C2E3 /* GameScene.sks in Resources */,
 				04422FBA231D38C70082C2E3 /* Assets.xcassets in Resources */,
+				04E2780A239166B000AB3DB6 /* PauseMenu.sks in Resources */,
+				048B74A2232ACC9C00066869 /* MainMenu.sks in Resources */,
 				04422FB4231D38C70082C2E3 /* Actions.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -218,8 +264,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				048B74A4232ACD5900066869 /* MainMenu.swift in Sources */,
+				048B749E232AC85400066869 /* spriteButtons.swift in Sources */,
 				04422FB7231D38C70082C2E3 /* GameScene.swift in Sources */,
+				048B74A7232B968700066869 /* Tower.swift in Sources */,
 				04422F9D231D38C70082C2E3 /* GameViewController.swift in Sources */,
+				04CA1AEF2369F3C200276EA0 /* GameBar.swift in Sources */,
+				048B74AA2340DB0600066869 /* Enemies.swift in Sources */,
+				04E278062391646C00AB3DB6 /* PauseMenu.swift in Sources */,
+				04E27803238C24B500AB3DB6 /* Path.swift in Sources */,
 				04422F9B231D38C70082C2E3 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -228,8 +281,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				048B74A5232ACD5900066869 /* MainMenu.swift in Sources */,
+				048B749F232AC85400066869 /* spriteButtons.swift in Sources */,
 				04422FB8231D38C70082C2E3 /* GameScene.swift in Sources */,
+				048B74A8232B968700066869 /* Tower.swift in Sources */,
 				04422FAE231D38C70082C2E3 /* GameViewController.swift in Sources */,
+				04CA1AF02369F3C200276EA0 /* GameBar.swift in Sources */,
+				048B74AB2340DB0600066869 /* Enemies.swift in Sources */,
+				04E278072391646C00AB3DB6 /* PauseMenu.swift in Sources */,
+				04E27804238C24B500AB3DB6 /* Path.swift in Sources */,
 				04422FAC231D38C70082C2E3 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -389,7 +449,7 @@
 				PRODUCT_NAME = "TD School Project";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -409,7 +469,7 @@
 				PRODUCT_NAME = "TD School Project";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
