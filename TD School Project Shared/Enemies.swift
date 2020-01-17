@@ -12,7 +12,7 @@ import SpriteKit
 class Enemies: SKSpriteNode {
     
     var health: CGFloat = 20
-    var currentHealth: CGFloat = 20
+    var currentHealth: CGFloat
     var armour: CGFloat = 0.5 //coeffecient of damage: lower is better
     var moveSpeed: CGFloat = 150
     var armourType: [damageTypes] = []
@@ -21,11 +21,15 @@ class Enemies: SKSpriteNode {
     
     
     required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+        fatalError()
     }
     
-    init(texture: SKTexture?, color: UIColor, size: CGSize, _path: [(Int, Int)], _types: [damageTypes]) {
+    init(texture: SKTexture?, color: UIColor, size: CGSize, _path: [(Int, Int)]?, _types: [damageTypes], _dif: Difficulty, _map: Int) {
+        health = health*_dif.getHealthMult
+        currentHealth = health
         super.init(texture: texture, color: color, size: size)
+        score = Int(CGFloat(score)*_dif.getHealthMult)
+        moveSpeed = moveSpeed*_dif.getSpeedMult
         armourType.append(contentsOf: _types)
         if armourType.first != damageTypes.none {
             self.money = self.money * armourType.count
@@ -44,55 +48,70 @@ class Enemies: SKSpriteNode {
 
         createHealthBar()
         
-        let path = createPath(path: _path)
+        let path = createPath(path: _path, map: _map)
         let move = SKAction.follow(path.cgPath, asOffset: false, orientToPath: false, speed: moveSpeed)
         self.run(move)
 
     }
     
-    func createPath(path: [(Int, Int)]) -> UIBezierPath {
+    func createPath(path: [(Int, Int)]?, map: Int) -> UIBezierPath {
         let route = UIBezierPath()
         
         //  x * 50 - 1/2 width? +25 (centre tile)
         // 1600x900
         
-        let tileSize = gameVariables.tileSize.rawValue
-        let centreOfTile = tileSize/2
-        let halfWidth = gameVariables.width.rawValue/2
-        let halfHeight = gameVariables.height.rawValue/2
-        
-        route.move(to: CGPoint(x: (CGFloat(path[0].1) * tileSize)-halfWidth+centreOfTile, y: (CGFloat(path[0].0) * tileSize)-halfHeight+centreOfTile) )
-        let end = path.count
-        for i in 1..<end {
-            route.addLine(to: CGPoint(x: (CGFloat(path[i].1) * tileSize)-halfWidth+centreOfTile, y: (CGFloat(path[i].0) * tileSize)-halfHeight+centreOfTile))
+        if map == 0 {
+            let tileSize = gameVariables.tileSize.rawValue
+            let centreOfTile = tileSize/2
+            let halfWidth = gameVariables.width.rawValue/2
+            let halfHeight = gameVariables.height.rawValue/2
+            
+            route.move(to: CGPoint(x: (CGFloat(path![0].1) * tileSize)-halfWidth+centreOfTile, y: (CGFloat(path![0].0) * tileSize)-halfHeight+centreOfTile) )
+            let end = path!.count
+            for i in 1..<end {
+                route.addLine(to: CGPoint(x: (CGFloat(path![i].1) * tileSize)-halfWidth+centreOfTile, y: (CGFloat(path![i].0) * tileSize)-halfHeight+centreOfTile))
+            }
+            route.addLine(to: CGPoint(x: (CGFloat(path![end-1].1) * tileSize)-halfWidth+centreOfTile+50, y: (CGFloat(path![end-1].0) * tileSize)-halfHeight+centreOfTile))
+        } else if map == 1 {
+            route.move(to: CGPoint(x: -775, y: 225))
+            route.addLine(to: CGPoint(x: -125, y: 225))
+            route.addLine(to: CGPoint(x: -125, y: -225))
+            route.addLine(to: CGPoint(x: 595, y: -225))
+        } else if map == 2 {
+            route.move(to: CGPoint(x: -775, y: 135))
+            route.addLine(to: CGPoint(x: -485, y: 135))
+            route.addLine(to: CGPoint(x: -485, y: 315))
+            route.addLine(to: CGPoint(x: -125, y: 315))
+            route.addLine(to: CGPoint(x: -125, y: -315))
+            route.addLine(to: CGPoint(x: 235, y: -315))
+            route.addLine(to: CGPoint(x: 235, y: -135))
+            route.addLine(to: CGPoint(x: 595, y: -135))
+        } else if map == 3 {
+            route.move(to: CGPoint(x: -775, y: 135))
+            route.addLine(to: CGPoint(x: -665, y: 135))
+            let rand = Int.random(in: 1...2)
+            if rand == 1 {
+                route.addLine(to: CGPoint(x: -665, y: 315))
+                route.addLine(to: CGPoint(x: -305, y: 315))
+            } else {
+                route.addLine(to: CGPoint(x: -665, y: -45))
+                route.addLine(to: CGPoint(x: -305, y: -45))
+            }
+            route.addLine(to: CGPoint(x: -305, y: 135))
+            route.addLine(to: CGPoint(x: -125, y: 135))
+            route.addLine(to: CGPoint(x: -125, y: -135))
+            route.addLine(to: CGPoint(x: 55, y: -135))
+            let rand2 = Int.random(in: 1...2)
+            if rand2 == 1 {
+                route.addLine(to: CGPoint(x: 55, y: 45))
+                route.addLine(to: CGPoint(x: 415, y: 45))
+            } else {
+                route.addLine(to: CGPoint(x: 55, y: -315))
+                route.addLine(to: CGPoint(x: 415, y: -315))
+            }
+            route.addLine(to: CGPoint(x: 415, y: -135))
+            route.addLine(to: CGPoint(x: 595, y: -135))
         }
-        route.addLine(to: CGPoint(x: (CGFloat(path[end-1].1) * tileSize)-halfWidth+centreOfTile+50, y: (CGFloat(path[end-1].0) * tileSize)-halfHeight+centreOfTile))
-        /* map 1
-        var rand:Int = Int.random(in: 1...2)
-        path.move(to: CGPoint(x: -800,y: 275))
-        path.addLine(to: CGPoint(x: -625, y: 275))
-        if rand == 1 {
-            path.addLine(to: CGPoint(x: -375, y: 275))
-        } else {
-            path.addLine(to: CGPoint(x: -625, y: 25))
-        }
-        path.addLine(to: CGPoint(x: -375, y: 25))
-        path.addLine(to: CGPoint(x: -225, y: 25))
-        path.addLine(to: CGPoint(x: -225, y: 275))
-        path.addLine(to: CGPoint(x: -125, y: 275))
-        path.addLine(to: CGPoint(x: -125, y: -275))
-        path.addLine(to: CGPoint(x: -25, y: -275))
-        path.addLine(to: CGPoint(x: -25, y: -25))
-        path.addLine(to: CGPoint(x: 125, y: -25))
-        rand = Int.random(in: 1...2)
-        if rand == 1 {
-            path.addLine(to: CGPoint(x: 375, y: -25))
-        } else {
-            path.addLine(to: CGPoint(x: 125, y: -275))
-        }
-        path.addLine(to: CGPoint(x: 375, y: -275))
-        path.addLine(to: CGPoint(x: 600, y: -275))
-        */
 
         return route
     }

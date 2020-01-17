@@ -88,6 +88,45 @@ enum towerTypes {
     }
 }
 
+enum Difficulty {
+    case easy
+    case medium
+    case hard
+    
+    var getHealthMult: CGFloat {
+        switch self {
+        case .easy:
+            return 1
+        case .medium:
+            return 1.5
+        case .hard:
+            return 2
+        }
+    }
+    
+    var getSpeedMult: CGFloat {
+        switch self {
+        case .easy:
+            return 1
+        case .medium:
+            return 1.2
+        case .hard:
+            return 1.4
+        }
+    }
+    
+    var getLetter: String {
+        switch self {
+        case .easy:
+            return "E"
+        case .medium:
+            return "M"
+        case .hard:
+            return "H"
+        }
+    }
+}
+
 //MARK: Scene
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
@@ -101,17 +140,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var numSpawned: Int = 0
     var gameDone:Bool = false
     var manager: SceneManager?
+    let userInfo = UserDefaults.standard
     
     //(time between spawn, enemy type, how many), multiple patterns in wave
     let wavesStructure: [[(Double,[damageTypes],Int)]] = [
         [(0.5, [.none], 10)],
+        [(0.5, [.projectile], 10)],
+        [(0.5, [.fire], 10)],
+        [(0.5, [.electric], 10)],
         [(0.5, [.laser], 10)],
-        [(0.25, [.none], 100)]
+        [(0.25, [.projectile, .fire, .laser, .electric], 100)],
+        [(0.05, [.projectile, .fire, .laser, .electric], 10), (0.1, [.projectile, .fire, .laser, .electric], 20), (0.25, [.projectile, .fire, .laser, .electric], 40)]
     ]
     var currentSpawnTime: TimeInterval = 0.5 // make first time between ;)
     
     //variables for nodes that will be used from the sks file
 
+    var whichMap: Int = 0
     var map:SKTileMapNode?
     var path:Path?
     
@@ -122,6 +167,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     //game variables
     
+    var difficulty: Difficulty = .easy
     var money:Int = 100
     var score:Int = 0
     var lives:Int = 10
@@ -149,27 +195,45 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.physicsWorld.contactDelegate = self
         self.physicsWorld.gravity = CGVector(dx: 0, dy: 0)
         
-        let gameWidth = gameVariables.width.rawValue - gameVariables.gameBarWidth.rawValue
-        let rowAmount = Int(gameVariables.height.rawValue/gameVariables.tileSize.rawValue)
-        let columnAmount = Int(gameWidth/gameVariables.tileSize.rawValue)
-        
-        path = Path(_rows: rowAmount, _columns: columnAmount)
-        let tileSet = SKTileSet(named: "Maze")!
-        let grassTile = tileSet.tileGroups.first(where: {$0.name == "wall\(Int(gameVariables.tileSize.rawValue))"})
-        let tileMap = SKTileMapNode(tileSet: tileSet, columns: columnAmount, rows: rowAmount,
-                                    tileSize: CGSize(width: gameVariables.tileSize.rawValue,
-                                                     height: gameVariables.tileSize.rawValue))
-        for row in 0..<path!.grid.count {
-            for column in 0..<path!.grid[row].count {
-                if path!.grid[row][column] == 0 {
-                    tileMap.setTileGroup(grassTile, forColumn: column, row: row)
+        if whichMap == 0 {
+            if self.path == nil && self.map == nil {
+            
+                let gameWidth = gameVariables.width.rawValue - gameVariables.gameBarWidth.rawValue
+                let rowAmount = Int(gameVariables.height.rawValue/gameVariables.tileSize.rawValue)
+                let columnAmount = Int(gameWidth/gameVariables.tileSize.rawValue)
+                
+                path = Path(_rows: rowAmount, _columns: columnAmount)
+                let tileSet = SKTileSet(named: "Maze")!
+                let grassTile = tileSet.tileGroups.first(where: {$0.name == "wall\(Int(gameVariables.tileSize.rawValue))"})
+                let tileMap = SKTileMapNode(tileSet: tileSet, columns: columnAmount, rows: rowAmount,
+                                            tileSize: CGSize(width: gameVariables.tileSize.rawValue,
+                                                             height: gameVariables.tileSize.rawValue))
+                for row in 0..<path!.grid.count {
+                    for column in 0..<path!.grid[row].count {
+                        if path!.grid[row][column] == 0 {
+                            tileMap.setTileGroup(grassTile, forColumn: column, row: row)
+                        }
+                    }
                 }
+
+                tileMap.position = CGPoint(x: -gameVariables.gameBarWidth.rawValue/2, y: 0)
+                tileMap.zPosition = -1
+                map = tileMap
             }
+            
+            if map?.parent != nil {
+                map?.removeFromParent()
+            }
+            self.addChild(map!)
+        } else if whichMap == 1 {
+            self.map = self.childNode(withName: "map\(whichMap)") as? SKTileMapNode
+        } else if whichMap == 2 {
+            self.map = self.childNode(withName: "map\(whichMap)") as? SKTileMapNode
+        } else if whichMap == 3 {
+            self.map = self.childNode(withName: "map\(whichMap)") as? SKTileMapNode
         }
-        self.addChild(tileMap)
-        tileMap.position = CGPoint(x: -gameVariables.gameBarWidth.rawValue/2, y: 0)
-        tileMap.zPosition = -1
-        map = tileMap
+        self.map?.position = CGPoint(x: -125, y: 0)
+
 
         print(self.children)
         
@@ -355,6 +419,10 @@ extension GameScene {
         // end game
         
         if lives < 1 {
+            let highScore = userInfo.integer(forKey: "highscore")
+            if score > highScore {
+                userInfo.set(score, forKey: "highscore")
+            }
             manager?.pauseGame(_which: .end)
         }
         
@@ -374,8 +442,10 @@ extension GameScene {
                         let enemy = Enemies(texture: SKTexture(imageNamed: "enemy1"),
                                             color: UIColor(displayP3Red: 0.2, green: 0.2, blue: 0.6, alpha: 1),
                                             size: CGSize(width: gameVariables.tileSize.rawValue, height: gameVariables.tileSize.rawValue),
-                                            _path: self.path!.path,
-                                            _types: wavesStructure[wavesNumber][wavePosistion].1)
+                                            _path: self.path?.path,
+                                            _types: wavesStructure[wavesNumber][wavePosistion].1,
+                                            _dif: self.difficulty,
+                                            _map: self.whichMap)
                         numSpawned += 1
                         self.addChild(enemy)
                         lastspawn = 0

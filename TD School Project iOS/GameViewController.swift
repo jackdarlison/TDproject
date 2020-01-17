@@ -13,8 +13,9 @@ import GameplayKit
 protocol SceneManager {
     func pauseGame(_which:whichScene)
     func loadGame()
-    func newGame()
+    func newGame(_dif:Difficulty, _map: Int)
     func loadMenu()
+    func retryGame()
     
 }
 
@@ -34,8 +35,20 @@ class GameViewController: UIViewController, SceneManager {
 
     }
     
-    func newGame() {
+    func newGame(_dif: Difficulty, _map: Int) {
         gameScene = GameScene.newGameScene()
+        gameScene?.difficulty = _dif
+        gameScene?.whichMap = _map
+        gameScene?.manager = self
+    }
+    
+    func retryGame() {
+        let oldGame: GameScene = gameScene!
+        gameScene = GameScene.newGameScene()
+        gameScene?.path = oldGame.path
+        gameScene?.map = oldGame.map
+        gameScene?.whichMap = oldGame.whichMap
+        gameScene?.difficulty = oldGame.difficulty
         gameScene?.manager = self
     }
     
@@ -63,7 +76,7 @@ class GameViewController: UIViewController, SceneManager {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        newGame()
+        newGame(_dif: .easy, _map: 0)
         
         loadMenu()
         

@@ -41,7 +41,7 @@ class PauseMenu: SKScene {
             print("retry button created")
             let retryButton = tester
             retryButton.buttonAction = {
-                self.manager?.newGame()
+                self.manager?.retryGame()
                 self.manager?.loadGame()
             }
         } else {

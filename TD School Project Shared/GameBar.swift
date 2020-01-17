@@ -114,7 +114,7 @@ class GameBar:SKSpriteNode {
         self.addChild(sellButton)
         sellButton.position = CGPoint(x: 0 , y:  -(self.size.height/2) + 75)
         sellButton.buttonAction = {
-            (self.parent as? GameScene)?.money += 50
+            (self.parent as? GameScene)?.money += self.parentNode.type.cost
             self.parentNode.removeFromParent()
             self.removeFromParent()
             self.rangeIndicator?.removeFromParent()
