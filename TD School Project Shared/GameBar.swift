@@ -18,7 +18,6 @@ class GameBar:SKSpriteNode {
     var range: SKLabelNode
     var special: SKLabelNode
     var rangeIndicator: SKShapeNode?
-    var specialValue: Int = 1
     
     init(texture: SKTexture?, color: UIColor, size: CGSize, _parentNode: Tower) {
         self.parentNode = _parentNode
@@ -98,10 +97,16 @@ class GameBar:SKSpriteNode {
         self.addChild(specialButton)
         specialButton.position = CGPoint(x: 65, y: -65)
         specialButton.buttonAction = {
-            self.specialValue += 1
+            self.parentNode.specialValue += 1
             if self.parentNode is ElectricTower {
                 (self.parentNode as! ElectricTower).chains += 1
+            } else if self.parentNode is FireTower {
+                (self.parentNode as! FireTower).dotAmount += 1
+            } else if self.parentNode is IceTower {
+                (self.parentNode as! IceTower).slowDuration += 0.5
+                (self.parentNode as! IceTower).slowAmount -= 0.05
             }
+            self.special.text = "special: \(self.parentNode.specialValue)"
         }
         let specialUpTxt:SKLabelNode = SKLabelNode(fontNamed: "Helvetica")
         specialUpTxt.fontSize = 24
@@ -169,7 +174,7 @@ class GameBar:SKSpriteNode {
         special.fontColor = SKColor.black
         special.position = CGPoint(x: -115, y: -290)
         special.horizontalAlignmentMode = .left
-        special.text = "special: \(specialValue)"
+        special.text = "special: \(self.parentNode.specialValue)"
         
     }
 }

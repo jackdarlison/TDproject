@@ -51,6 +51,7 @@ enum towerTypes {
     case fire
     case laser
     case electric
+    case ice
     
     var cost: Int {
         switch self {
@@ -62,6 +63,8 @@ enum towerTypes {
             return 200
         case .electric:
             return 150
+        case .ice:
+            return 100
         }
     }
     
@@ -83,7 +86,10 @@ enum towerTypes {
             return ElectricTower(texture: SKTexture(imageNamed: "electricTower"),
                                  color: UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 1),
                                  size: CGSize(width: gameVariables.tileSize.rawValue, height: gameVariables.tileSize.rawValue))
-            
+        case .ice:
+            return IceTower(texture: SKTexture(imageNamed: "iceTower"),
+                            color: UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 1),
+                            size: CGSize(width: gameVariables.tileSize.rawValue, height: gameVariables.tileSize.rawValue))
         }
     }
 }
@@ -147,10 +153,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         [(0.5, [.none], 10)],
         [(0.5, [.projectile], 10)],
         [(0.5, [.fire], 10)],
+        [(0.5, [.ice], 10)],
         [(0.5, [.electric], 10)],
         [(0.5, [.laser], 10)],
-        [(0.25, [.projectile, .fire, .laser, .electric], 100)],
-        [(0.05, [.projectile, .fire, .laser, .electric], 10), (0.1, [.projectile, .fire, .laser, .electric], 20), (0.25, [.projectile, .fire, .laser, .electric], 40)]
+        [(0.25, [.projectile, .fire, .laser, .electric, .ice], 100)],
+        [(0.05, [.projectile, .fire, .laser, .electric, .ice], 10), (0.1, [.projectile, .fire, .laser, .electric, .ice], 20), (0.25, [.projectile, .fire, .laser, .electric, .ice], 40)]
     ]
     var currentSpawnTime: TimeInterval = 0.5 // make first time between ;)
     
@@ -261,6 +268,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if let tester:TowerButton = self.childNode(withName: "electricTowerButton") as? TowerButton {
             print("tower created")
             tester.whichTower = towerTypes.electric
+        } else {
+            print("tower button not created")
+        }
+        
+        if let tester:TowerButton = self.childNode(withName: "iceTowerButton") as? TowerButton {
+            print("tower created")
+            tester.whichTower = towerTypes.ice
         } else {
             print("tower button not created")
         }
@@ -382,6 +396,8 @@ extension GameScene {
             }
             if B.parentTower is FireTower {
                 (B.parentTower as! FireTower).applyDot(enemy: E)
+            } else if B.parentTower is IceTower {
+                (B.parentTower as! IceTower).applySlow(enemy: E)
             }
             B.removeFromParent()
         } else if (contact.bodyA.categoryBitMask == bodyTypes.enemy.rawValue && contact.bodyB.categoryBitMask == bodyTypes.bullet.rawValue) {
@@ -393,6 +409,8 @@ extension GameScene {
             }
             if B.parentTower is FireTower {
                 (B.parentTower as! FireTower).applyDot(enemy: E)
+            } else if B.parentTower is IceTower {
+                (B.parentTower as! IceTower).applySlow(enemy: E)
             }
             B.removeFromParent()
         }
@@ -417,13 +435,20 @@ extension GameScene {
         }
         
         // end game
+        let highScore = userInfo.integer(forKey: "highscore")
         
         if lives < 1 {
-            let highScore = userInfo.integer(forKey: "highscore")
             if score > highScore {
                 userInfo.set(score, forKey: "highscore")
             }
             manager?.pauseGame(_which: .end)
+        }
+        
+        if gameDone {
+            if score > highScore {
+                userInfo.set(score, forKey: "highscore")
+            }
+            userInfo.set("completed", forKey: "map\(whichMap)")
         }
         
         //keeps track of time

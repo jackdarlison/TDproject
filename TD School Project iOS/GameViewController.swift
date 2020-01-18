@@ -23,6 +23,7 @@ class GameViewController: UIViewController, SceneManager {
     
     var gameScene: GameScene?
     var pauseScene: PauseMenu?
+    let userInfo = UserDefaults.standard
     
     func pauseGame(_which: whichScene) {
         
@@ -74,6 +75,13 @@ class GameViewController: UIViewController, SceneManager {
     }
 
     override func viewDidLoad() {
+        
+        for i in 0...9 {
+            if userInfo.object(forKey: "map\(i)") == nil {
+                userInfo.set("not completed", forKey: "map\(i)")
+            }
+        }
+        
         super.viewDidLoad()
         
         newGame(_dif: .easy, _map: 0)

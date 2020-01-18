@@ -9,10 +9,11 @@
 import Foundation
 import SpriteKit
 
-enum whichScene:UInt32 {
+enum whichScene {
     
-    case pause = 0b1
-    case end = 0b10
+    case pause
+    case end
+    case win
     
 }
 
@@ -70,6 +71,8 @@ class PauseMenu: SKScene {
                 tester.text = "paused!"
             } else if which == .end {
                 tester.text = "You died!"
+            } else if which == .win {
+                tester.text = "You Win!"
             }
         } else {
             print("label not created")

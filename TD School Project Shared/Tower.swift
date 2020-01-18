@@ -25,6 +25,7 @@ class Tower: SKSpriteNode {
     var spread:Float = 36
     var bulletLifeTime: TimeInterval = 10
     var dmgType: damageTypes = .projectile
+    var specialValue: CGFloat = 0
     
     var turretHandler: SKSpriteNode = SKSpriteNode()
     
@@ -250,7 +251,7 @@ class FireTower: Tower {
     }
     
     func applyDot(enemy: Enemies) {
-        let colourChange = SKAction.colorize(with: UIColor.init(displayP3Red: 1, green: 0.1, blue: 0.1, alpha: 1), colorBlendFactor: 0.2, duration: Double(dotAmount)*dotInterval)
+        let colourChange = SKAction.colorize(with: UIColor.init(displayP3Red: 1, green: 0.1, blue: 0.1, alpha: 1), colorBlendFactor: 0.4, duration: 0)
         let dot = SKAction.run {
             let didKil = enemy.hit(dmg: self.dotDmg, dmgType: self.dmgType)
             if didKil { self.kills += 1}
@@ -333,6 +334,38 @@ class ElectricTower: Tower {
             updateCount = 0
         }
         updateCount += 1
+        
+    }
+}
+
+//MARK: Ice tower
+
+class IceTower: Tower {
+    
+    var slowAmount: CGFloat = 0.6
+    var slowDuration: TimeInterval = 2
+    
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
+    override init(texture: SKTexture?, color: UIColor, size: CGSize) {
+        super.init(texture: texture, color: color, size: size)
+        self.damage = 1
+        self.name = "Ice Tower"
+        self.dmgType = .ice
+        self.type = .ice
+        addTurret(_texture: SKTexture(imageNamed: "iceTowerTurret"))
+    }
+    
+    func applySlow(enemy: Enemies) {
+        let iceColour = SKAction.colorize(with: #colorLiteral(red: 0.6980392157, green: 0.8431372549, blue: 1, alpha: 1), colorBlendFactor: 0.4, duration: 0)
+        let slow = SKAction.speed(to: slowAmount, duration: slowDuration)
+        let normalColour = SKAction.colorize(withColorBlendFactor: 0, duration: 0)
+        let normalSpeed = SKAction.speed(to: 1, duration: 0)
+        
+        enemy.run(SKAction.sequence([iceColour,slow,normalColour,normalSpeed]))
         
     }
 }

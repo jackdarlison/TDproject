@@ -114,8 +114,8 @@
 				04422F8F231D38C50082C2E3 /* Actions.sks */,
 				04422F90231D38C50082C2E3 /* GameScene.sks */,
 				04422F91231D38C50082C2E3 /* GameScene.swift */,
-				04E278052391646C00AB3DB6 /* PauseMenu.swift */,
 				04E27808239166B000AB3DB6 /* PauseMenu.sks */,
+				04E278052391646C00AB3DB6 /* PauseMenu.swift */,
 				04422F92231D38C60082C2E3 /* Assets.xcassets */,
 			);
 			path = "TD School Project Shared";
