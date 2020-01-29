@@ -11,7 +11,7 @@ import SpriteKit
 
 class Enemies: SKSpriteNode {
     
-    var health: CGFloat = 20
+    var health: CGFloat = 25
     var currentHealth: CGFloat
     var armour: CGFloat = 0.5 //coeffecient of damage: lower is better
     var moveSpeed: CGFloat = 150
@@ -24,7 +24,8 @@ class Enemies: SKSpriteNode {
         fatalError()
     }
     
-    init(texture: SKTexture?, color: UIColor, size: CGSize, _path: [(Int, Int)]?, _types: [damageTypes], _dif: Difficulty, _map: Int) {
+    init(texture: SKTexture?, color: UIColor, size: CGSize, _path: [(Int, Int)]?, _types: [damageTypes], _dif: Difficulty, _map: Int, _wave: CGFloat) {
+        health *= 1 + _wave/5
         health = health*_dif.getHealthMult
         currentHealth = health
         super.init(texture: texture, color: color, size: size)

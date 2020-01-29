@@ -106,9 +106,13 @@ class MainMenu: SKScene, UITextFieldDelegate {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         background?.removeFromParent()
     }
+    
+    public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        return range.location < 8
+    }
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        let isValid = try! NSRegularExpression(pattern: "[:alnum:]{3,8}")
+        let isValid = try! NSRegularExpression(pattern: "(\\w|\\s){3,8}")
         let text = textField.text!
         let result = isValid.firstMatch(in: text, options: [], range: NSRange(location: 0, length: text.count))
         if result != nil {

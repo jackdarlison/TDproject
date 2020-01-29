@@ -175,7 +175,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     //game variables
     
     var difficulty: Difficulty = .easy
-    var money:Int = 100
+    var money:Int = 1000
     var score:Int = 0
     var lives:Int = 10
     let moneyNode: SKLabelNode = SKLabelNode(fontNamed: "Helvetica")
@@ -449,6 +449,7 @@ extension GameScene {
                 userInfo.set(score, forKey: "highscore")
             }
             userInfo.set("completed", forKey: "map\(whichMap)")
+            manager?.pauseGame(_which: .win)
         }
         
         //keeps track of time
@@ -470,7 +471,8 @@ extension GameScene {
                                             _path: self.path?.path,
                                             _types: wavesStructure[wavesNumber][wavePosistion].1,
                                             _dif: self.difficulty,
-                                            _map: self.whichMap)
+                                            _map: self.whichMap,
+                                            _wave: CGFloat(wavesNumber))
                         numSpawned += 1
                         self.addChild(enemy)
                         lastspawn = 0
@@ -518,6 +520,10 @@ extension GameScene {
         self.scoreNode.text = "Score: \(score)"
         self.livesNode.text = "lives: \(lives)"
         self.moneyNode.text = "money: \(money)"
+        
+        if self.childNode(withName: "towerMenu") != nil {
+           (self.childNode(withName: "towerMenu") as! GameBar).update()
+        }
     }
 }
 

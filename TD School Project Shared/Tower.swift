@@ -13,6 +13,16 @@ import SpriteKit
 
 class Tower: SKSpriteNode {
     
+    var upgrades: [Int] = [0,0,0,0] {
+        didSet {
+            upgradeAmount = 0
+            for val in upgrades {
+                upgradeAmount += val
+            }
+        }
+    }
+    var upgradeAmount: Int = 0
+    var upgradeCost: Int = 50
     var type: towerTypes = .basic
     var damage: CGFloat = 5
     var attackSpeed: CGFloat = 0.3
@@ -45,7 +55,7 @@ class Tower: SKSpriteNode {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        let towerMenu = GameBar(texture: nil, color: UIColor(displayP3Red: 0.7, green: 0.7, blue: 0.7, alpha: 1), size: CGSize(width: 250, height: gameVariables.height.rawValue), _parentNode: self)
+        let towerMenu = GameBar(texture: nil, color: UIColor(displayP3Red: 0.7, green: 0.7, blue: 0.7, alpha: 1), size: CGSize(width: 250, height: gameVariables.height.rawValue), _parentNode: self, _game: self.parent! as! GameScene)
         towerMenu.name = "towerMenu"
         if self.parent?.childNode(withName: "towerMenu") != nil {
             (self.parent?.childNode(withName: "towerMenu") as? GameBar)?.rangeIndicator!.removeFromParent()
