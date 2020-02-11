@@ -389,7 +389,7 @@ extension GameScene {
         
         if (contact.bodyA.categoryBitMask == bodyTypes.bullet.rawValue && contact.bodyB.categoryBitMask == bodyTypes.enemy.rawValue) {
             let E:Enemies = contact.bodyB.node as! Enemies
-            let B: Bullet = contact.bodyA.node as! Bullet
+            let B:Bullet = contact.bodyA.node as! Bullet
             let isDead = E.hit(dmg: B.damage, dmgType: B.dmgType)
             if isDead {
                 B.parentTower.kills += 1
@@ -400,9 +400,9 @@ extension GameScene {
                 (B.parentTower as! IceTower).applySlow(enemy: E)
             }
             B.removeFromParent()
-        } else if (contact.bodyA.categoryBitMask == bodyTypes.enemy.rawValue && contact.bodyB.categoryBitMask == bodyTypes.bullet.rawValue) {
+        } else if (contact.bodyA.categoryBitMask == bodyTypes.enemy.rawValue && contact.bodyB.categoryBitMask == bodyTypes.bullet.rawValue && contact.bodyB.node != nil ) { //fixed in testing 
             let E:Enemies = contact.bodyA.node as! Enemies
-            let B: Bullet = contact.bodyB.node as! Bullet
+            let B:Bullet = contact.bodyB.node as! Bullet
             let isDead = E.hit(dmg: B.damage, dmgType: B.dmgType)
             if isDead {
                 B.parentTower.kills += 1

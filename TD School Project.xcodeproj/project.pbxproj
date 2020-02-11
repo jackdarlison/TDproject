@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0428245F23F311370017843B /* crash test.png in Resources */ = {isa = PBXBuildFile; fileRef = 0428245E23F311370017843B /* crash test.png */; };
 		04422F9B231D38C70082C2E3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04422F9A231D38C70082C2E3 /* AppDelegate.swift */; };
 		04422F9D231D38C70082C2E3 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04422F9C231D38C70082C2E3 /* GameViewController.swift */; };
 		04422FA0231D38C70082C2E3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04422F9E231D38C70082C2E3 /* Main.storyboard */; };
@@ -45,6 +46,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0428245E23F311370017843B /* crash test.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "crash test.png"; path = "../../../Desktop/crash test.png"; sourceTree = "<group>"; };
 		04422F8F231D38C50082C2E3 /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
 		04422F90231D38C50082C2E3 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 		04422F91231D38C50082C2E3 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
@@ -116,6 +118,7 @@
 				04422F91231D38C50082C2E3 /* GameScene.swift */,
 				04E27808239166B000AB3DB6 /* PauseMenu.sks */,
 				04E278052391646C00AB3DB6 /* PauseMenu.swift */,
+				0428245E23F311370017843B /* crash test.png */,
 				04422F92231D38C60082C2E3 /* Assets.xcassets */,
 			);
 			path = "TD School Project Shared";
@@ -240,6 +243,7 @@
 				04422FA3231D38C70082C2E3 /* LaunchScreen.storyboard in Resources */,
 				04422FB9231D38C70082C2E3 /* Assets.xcassets in Resources */,
 				04E27809239166B000AB3DB6 /* PauseMenu.sks in Resources */,
+				0428245F23F311370017843B /* crash test.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -439,8 +443,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 5B762QL2X5;
 				INFOPLIST_FILE = "TD School Project iOS/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -459,8 +464,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 5B762QL2X5;
 				INFOPLIST_FILE = "TD School Project iOS/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
